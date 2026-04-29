@@ -105,13 +105,13 @@ export default function ApplicationForm() {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-imet-mint">
               <CheckCircle2 className="h-8 w-8 text-imet-aqua-dark" />
             </div>
-            <h2 className="heading-md mb-4">¡Solicitud recibida!</h2>
+            <h2 className="heading-md mb-4">¡Pre-registro recibido!</h2>
             <p className="mb-6 text-base leading-relaxed text-slate-600">
-              Gracias por aplicar al programa{" "}
+              Gracias por dar el primer paso al programa{" "}
               <strong className="text-imet-navy">Agentes del Cambio</strong>.
-              Tu solicitud entró a la fase de evaluación del comité
-              seleccionador. Te contactaremos al teléfono que registraste con la
-              resolución de tu candidatura.
+              Tu pre-registro entró a la fase de evaluación del comité.
+              Te contactaremos al teléfono que registraste para continuar con
+              el proceso.
             </p>
             <div className="rounded-xl bg-imet-cream p-5 text-left">
               <div className="mb-2 text-xs font-bold uppercase tracking-widest text-imet-aqua-dark">
@@ -149,12 +149,24 @@ export default function ApplicationForm() {
       <div className="container-tight">
         <div className="mx-auto max-w-3xl">
           <div className="mb-10 text-center">
-            <div className="eyebrow mb-4">Formulario de registro</div>
-            <h2 className="heading-lg mb-4">Aplica a tu beca ahora</h2>
-            <p className="lead">
-              Completa el formulario y comienza tu camino en iMET con el
-              respaldo del programa Agentes del Cambio.
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-imet-aqua px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-md shadow-imet-aqua/30 sm:text-xs">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+              Pre-registro abierto
+            </div>
+            <h2 className="heading-lg mb-4">Da el primer paso</h2>
+            <p className="lead mb-5">
+              Pre-regístrate hoy y reserva tu lugar en el proceso. El equipo
+              del programa te contactará para continuar con la evaluación de
+              tu candidatura.
             </p>
+            <div className="mx-auto inline-flex items-start gap-2 rounded-xl border border-imet-aqua/20 bg-white px-4 py-2.5 text-left text-xs text-slate-600 sm:text-sm">
+              <span className="mt-0.5 text-imet-aqua-dark">ⓘ</span>
+              <span>
+                Este es un <strong className="text-imet-navy">pre-registro</strong>.
+                No es la inscripción final — es el primer paso para ser
+                considerado en el programa.
+              </span>
+            </div>
           </div>
 
           <form
@@ -384,7 +396,7 @@ export default function ApplicationForm() {
                   </>
                 ) : (
                   <>
-                    Enviar solicitud
+                    Enviar pre-registro
                     <ArrowRight className="h-4 w-4" />
                   </>
                 )}
