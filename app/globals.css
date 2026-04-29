@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --imet-aqua: #14b8a6;
+  --imet-aqua-dark: #0f766e;
+  --imet-navy: #1e3a5f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #ffffff;
+  color: #0f172a;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-imet-aqua px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-imet-aqua/30 transition hover:bg-imet-aqua-dark hover:shadow-xl hover:shadow-imet-aqua/40 focus:outline-none focus:ring-2 focus:ring-imet-aqua focus:ring-offset-2 sm:px-7 sm:py-3.5;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-imet-aqua bg-white px-6 py-3 text-sm font-semibold text-imet-aqua-dark transition hover:bg-imet-mint focus:outline-none focus:ring-2 focus:ring-imet-aqua focus:ring-offset-2 sm:px-7 sm:py-3.5;
+  }
+
+  .section {
+    @apply px-5 py-16 sm:px-6 sm:py-20 md:px-10 md:py-24 lg:py-28;
+  }
+
+  .container-tight {
+    @apply mx-auto max-w-6xl;
+  }
+
+  .eyebrow {
+    @apply inline-block rounded-full bg-imet-mint px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-imet-aqua-dark sm:px-4 sm:text-xs;
+  }
+
+  .heading-xl {
+    @apply text-3xl font-black leading-[1.1] tracking-tight text-imet-navy sm:text-5xl md:text-6xl;
+  }
+
+  .heading-lg {
+    @apply text-[26px] font-black leading-tight tracking-tight text-imet-navy sm:text-4xl md:text-5xl;
+  }
+
+  .heading-md {
+    @apply text-xl font-bold tracking-tight text-imet-navy sm:text-2xl md:text-3xl;
+  }
+
+  .lead {
+    @apply text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl;
+  }
+}
+
+/* Hero gradient circuit pattern */
+.bg-circuit {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(20, 184, 166, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(94, 234, 212, 0.12) 0%, transparent 40%),
+    linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+}
+
+.bg-aqua-gradient {
+  background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+}
+
+.bg-navy-gradient {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2a4f7c 100%);
+}
+
+/* Subtle circuit lines decoration */
+.circuit-decoration {
+  background-image:
+    linear-gradient(90deg, transparent 0%, transparent 49%, rgba(20, 184, 166, 0.1) 50%, transparent 51%),
+    linear-gradient(0deg, transparent 0%, transparent 49%, rgba(20, 184, 166, 0.1) 50%, transparent 51%);
+  background-size: 60px 60px;
+}

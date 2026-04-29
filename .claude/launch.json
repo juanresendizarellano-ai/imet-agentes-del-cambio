@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "imet-landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "C:\\Users\\juan_\\Downloads\\apps-claude\\imet-agentes-del-cambio",
+      "port": 3030
+    }
+  ]
+}
