@@ -1,4 +1,13 @@
-import { ClipboardList, Users2, Trophy } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import {
+  ClipboardList,
+  Users2,
+  Trophy,
+  ChevronDown,
+  type LucideIcon,
+} from "lucide-react";
 
 const stages = [
   {
@@ -42,6 +51,101 @@ const stages = [
   },
 ];
 
+function StageCard({
+  number,
+  icon: Icon,
+  title,
+  timing,
+  description,
+  bullets,
+}: {
+  number: string;
+  icon: LucideIcon;
+  title: string;
+  timing: string;
+  description: string;
+  bullets: string[];
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition hover:border-imet-aqua-light/40 hover:bg-white/[0.06]">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-4 p-5 text-left md:cursor-default md:block md:p-7"
+      >
+        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-imet-aqua text-white shadow-lg shadow-imet-aqua/40 md:h-12 md:w-12">
+          <Icon className="h-5 w-5" />
+        </div>
+
+        <div className="flex-1 md:mt-5">
+          <div className="flex items-center justify-between md:mb-1">
+            <h3 className="text-base font-bold text-white md:text-lg lg:text-xl">
+              {title}
+            </h3>
+            <span className="hidden text-4xl font-black text-imet-aqua-light/30 md:inline">
+              {number}
+            </span>
+          </div>
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-imet-aqua-light md:mt-0 md:text-xs">
+            {timing}
+          </div>
+        </div>
+
+        <ChevronDown
+          className={`h-5 w-5 flex-shrink-0 text-imet-aqua-light transition-transform md:hidden ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+
+        {/* Desktop content */}
+        <div className="hidden md:block">
+          <p className="mb-5 mt-4 text-sm leading-relaxed text-white/70">
+            {description}
+          </p>
+          <ul className="space-y-2 border-t border-white/10 pt-4">
+            {bullets.map((b) => (
+              <li
+                key={b}
+                className="flex items-start gap-2 text-xs text-white/80"
+              >
+                <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-imet-aqua" />
+                {b}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </button>
+
+      {/* Mobile collapsible content */}
+      <div
+        className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-out md:hidden ${
+          open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-5 pb-5">
+          <p className="mb-4 text-sm leading-relaxed text-white/70">
+            {description}
+          </p>
+          <ul className="space-y-2 border-t border-white/10 pt-4">
+            {bullets.map((b) => (
+              <li
+                key={b}
+                className="flex items-start gap-2 text-xs text-white/80"
+              >
+                <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-imet-aqua" />
+                {b}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Stages() {
   return (
     <section
@@ -64,52 +168,18 @@ export default function Stages() {
             Un proceso claro y transparente. Aquí te explicamos qué pasa desde
             que envías tu formulario hasta que recibes tu resultado.
           </p>
+          <p className="mt-3 text-xs text-imet-aqua-light md:hidden">
+            Toca cada etapa para ver el detalle.
+          </p>
         </div>
 
-        <div className="relative grid gap-5 md:grid-cols-3 md:gap-6">
+        <div className="relative grid gap-3 md:grid-cols-3 md:gap-6">
           {/* Línea conectora */}
           <div className="absolute left-[10%] right-[10%] top-12 hidden h-px bg-gradient-to-r from-transparent via-imet-aqua-light/40 to-transparent md:block" />
 
-          {stages.map((s) => {
-            const Icon = s.icon;
-            return (
-              <div
-                key={s.number}
-                className="relative rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition hover:border-imet-aqua-light/40 hover:bg-white/[0.06] sm:p-7"
-              >
-                <div className="mb-5 flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-imet-aqua text-white shadow-lg shadow-imet-aqua/40 sm:h-12 sm:w-12">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-4xl font-black text-imet-aqua-light/30">
-                    {s.number}
-                  </span>
-                </div>
-
-                <h3 className="mb-1 text-lg font-bold text-white sm:text-xl">
-                  {s.title}
-                </h3>
-                <div className="mb-4 text-[10px] font-semibold uppercase tracking-wider text-imet-aqua-light sm:text-xs">
-                  {s.timing}
-                </div>
-                <p className="mb-5 text-sm leading-relaxed text-white/70">
-                  {s.description}
-                </p>
-
-                <ul className="space-y-2 border-t border-white/10 pt-4">
-                  {s.bullets.map((b) => (
-                    <li
-                      key={b}
-                      className="flex items-start gap-2 text-xs text-white/80"
-                    >
-                      <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-imet-aqua" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+          {stages.map((s) => (
+            <StageCard key={s.number} {...s} />
+          ))}
         </div>
       </div>
     </section>

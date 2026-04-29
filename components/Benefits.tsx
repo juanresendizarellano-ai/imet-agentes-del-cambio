@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Percent,
   CheckCircle2,
@@ -8,6 +11,8 @@ import {
   Award,
   Handshake,
   Globe2,
+  ChevronDown,
+  type LucideIcon,
 } from "lucide-react";
 
 const benefits = [
@@ -76,6 +81,63 @@ const benefits = [
   },
 ];
 
+function BenefitCard({
+  icon: Icon,
+  number,
+  title,
+  description,
+}: {
+  icon: LucideIcon;
+  number: string;
+  title: string;
+  description: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white transition hover:border-imet-aqua/30 hover:shadow-xl hover:shadow-imet-aqua/10 md:hover:-translate-y-1">
+      <div className="pointer-events-none absolute -right-3 -top-3 text-7xl font-black text-imet-mint opacity-50 transition group-hover:opacity-80">
+        {number}
+      </div>
+
+      {/* Header (toggle on mobile, always visible on desktop) */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="relative flex w-full items-center gap-4 p-5 text-left md:cursor-default md:block md:p-7"
+      >
+        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-aqua-gradient shadow-md shadow-imet-aqua/30 md:mb-4 md:h-12 md:w-12">
+          <Icon className="h-5 w-5 text-white md:h-6 md:w-6" />
+        </div>
+        <h3 className="flex-1 text-base font-bold text-imet-navy md:mb-2 md:text-lg">
+          {title}
+        </h3>
+        <ChevronDown
+          className={`h-5 w-5 flex-shrink-0 text-imet-aqua-dark transition-transform md:hidden ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+        {/* Desktop description */}
+        <p className="hidden text-sm leading-relaxed text-slate-600 md:block">
+          {description}
+        </p>
+      </button>
+
+      {/* Mobile collapsible description */}
+      <div
+        className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-out md:hidden ${
+          open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <p className="px-5 pb-5 text-sm leading-relaxed text-slate-600">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Benefits() {
   return (
     <section id="beneficios" className="section bg-imet-cream">
@@ -89,33 +151,15 @@ export default function Benefits() {
             Va mucho más allá de un descuento: es un paquete completo de
             formación, networking y experiencia profesional real.
           </p>
+          <p className="mt-3 text-xs text-slate-500 md:hidden">
+            Toca cada beneficio para ver el detalle.
+          </p>
         </div>
 
-        <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {benefits.map((b) => {
-            const Icon = b.icon;
-            return (
-              <div
-                key={b.number}
-                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 transition hover:-translate-y-1 hover:border-imet-aqua/30 hover:shadow-xl hover:shadow-imet-aqua/10 sm:p-7"
-              >
-                <div className="absolute -right-3 -top-3 text-7xl font-black text-imet-mint opacity-50 transition group-hover:opacity-80">
-                  {b.number}
-                </div>
-                <div className="relative">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-aqua-gradient shadow-md shadow-imet-aqua/30">
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="mb-2 text-lg font-bold text-imet-navy">
-                    {b.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    {b.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {benefits.map((b) => (
+            <BenefitCard key={b.number} {...b} />
+          ))}
         </div>
       </div>
     </section>
