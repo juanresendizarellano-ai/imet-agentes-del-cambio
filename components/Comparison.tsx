@@ -70,40 +70,44 @@ export default function Comparison() {
           ))}
         </div>
 
-        {/* Versión móvil: cards apiladas */}
-        <div className="space-y-3 sm:hidden">
-          {rows.map((row) => (
-            <div
-              key={row.label}
-              className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
-            >
-              <div className="bg-imet-navy px-5 py-3 text-sm font-bold text-white">
-                {row.label}
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-slate-100">
-                <div className="p-4">
-                  <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Sin el programa
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sm text-slate-500">
-                    {row.without === "—" ? (
-                      <X className="h-4 w-4 flex-shrink-0 text-slate-400" />
-                    ) : null}
-                    <span className="truncate">{row.without}</span>
-                  </div>
-                </div>
-                <div className="bg-imet-mint/40 p-4">
-                  <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-imet-aqua-dark">
-                    Con el programa
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sm font-bold text-imet-aqua-dark">
-                    <Check className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">{row.with}</span>
-                  </div>
-                </div>
-              </div>
+        {/* Versión móvil: card unificada */}
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg sm:hidden">
+          {/* Header strip */}
+          <div className="flex">
+            <div className="flex-1 bg-slate-100 px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Sin el programa
             </div>
-          ))}
+            <div className="flex-1 bg-imet-aqua px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-white">
+              Agentes del Cambio
+            </div>
+          </div>
+
+          {/* Rows */}
+          <div className="divide-y divide-slate-100">
+            {rows.map((row) => (
+              <div key={row.label}>
+                <div className="px-4 pt-3 pb-1.5 text-[13px] font-bold text-imet-navy">
+                  {row.label}
+                </div>
+                <div className="flex">
+                  <div className="flex-1 px-4 pb-3">
+                    <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
+                      {row.without === "—" ? (
+                        <X className="h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+                      ) : null}
+                      <span>{row.without}</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 bg-imet-mint/30 px-4 py-2">
+                    <div className="flex items-center gap-1.5 text-[13px] font-semibold text-imet-aqua-dark">
+                      <Check className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>{row.with}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
