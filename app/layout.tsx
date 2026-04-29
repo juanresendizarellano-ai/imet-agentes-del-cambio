@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "iMET Agentes del Cambio | Beca Impulso a la Educación",
+  title: "Impulso a la Educación iMET — Agentes del Cambio",
   description:
-    "Aplica al programa Agentes del Cambio de iMET en coordinación con el Dip. Pepe Canto. 50% de beca, inscripción gratuita y acceso total a iMET Academy.",
+    "Iniciativa del Dip. Pepe Canto en coordinación con iMET. Beca del 50% en colegiaturas e inscripción gratuita en licenciaturas y maestrías.",
   openGraph: {
-    title: "iMET Agentes del Cambio",
+    title: "Impulso a la Educación iMET — Agentes del Cambio",
     description:
-      "Beca del 50% e inscripción gratuita en licenciaturas y maestrías de iMET.",
+      "Beca del 50% en colegiaturas e inscripción gratuita en licenciaturas y maestrías de iMET. Iniciativa del Dip. Pepe Canto.",
     type: "website",
     locale: "es_MX",
   },

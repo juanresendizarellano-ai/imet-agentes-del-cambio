@@ -14,6 +14,10 @@ export default function Hero() {
               <span className="truncate">iMET, líder en IA del sureste mexicano</span>
             </div>
 
+            <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-imet-aqua-dark sm:text-xs">
+              Programa Impulso a la Educación iMET
+            </div>
+
             <h1 className="heading-xl mb-5 sm:mb-6">
               iMET{" "}
               <span className="relative inline-block">
@@ -25,11 +29,13 @@ export default function Hero() {
             </h1>
 
             <p className="lead mb-7 max-w-xl sm:mb-8">
-              Beca del <strong className="text-imet-navy">50% en colegiaturas</strong>{" "}
-              e <strong className="text-imet-navy">inscripción gratuita</strong> en
-              licenciaturas y maestrías de iMET — la universidad líder en
-              inteligencia artificial del sureste mexicano. Una iniciativa para
-              democratizar la educación superior de calidad en Yucatán.
+              Una iniciativa del{" "}
+              <strong className="text-imet-navy">Dip. Pepe Canto</strong>{" "}
+              en coordinación con iMET. Beca del{" "}
+              <strong className="text-imet-navy">50% en colegiaturas</strong>{" "}
+              e <strong className="text-imet-navy">inscripción gratuita</strong>{" "}
+              en licenciaturas y maestrías para democratizar la educación superior
+              de calidad en Yucatán.
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row">

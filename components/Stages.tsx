@@ -17,10 +17,10 @@ const stages = [
   {
     number: "02",
     icon: Users2,
-    title: "Evaluación del comité seleccionador",
+    title: "Evaluación del comité",
     timing: "1 a 2 semanas",
     description:
-      "El comité seleccionador de iMET, en coordinación con el equipo del Dip. Pepe Canto, revisa tu solicitud y evalúa tu candidatura para el programa.",
+      "El comité evaluador del programa revisa tu solicitud y evalúa tu candidatura para definir si cumples con el perfil que busca Agentes del Cambio.",
     bullets: [
       "Revisión de solicitud",
       "Validación de perfil y compromiso",

@@ -78,8 +78,8 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-8 text-xs text-white/50 sm:flex-row sm:items-center">
           <div>
-            © {new Date().getFullYear()} iMET. En coordinación con el equipo
-            del Dip. Pepe Canto Tamayo.
+            © {new Date().getFullYear()} Programa Impulso a la Educación iMET — Agentes del Cambio.
+            Iniciativa del Dip. Pepe Canto en coordinación con iMET.
           </div>
           <div>Hecho con compromiso por la educación de Yucatán.</div>
         </div>

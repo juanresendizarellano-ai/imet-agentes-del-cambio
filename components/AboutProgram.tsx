@@ -8,17 +8,18 @@ export default function AboutProgram() {
           <div>
             <div className="eyebrow mb-4">El programa</div>
             <h2 className="heading-lg mb-5 sm:mb-6">
-              ¿Qué es el Proyecto iMET Agentes del Cambio?
+              ¿Qué es Impulso a la Educación iMET — Agentes del Cambio?
             </h2>
             <p className="lead mb-5 sm:mb-6">
-              Un programa de apoyo diseñado para democratizar el acceso a la
-              educación superior de calidad, ofreciendo condiciones excepcionales
-              para estudiantes comprometidos con su crecimiento personal y
-              profesional.
+              Una iniciativa del{" "}
+              <strong className="text-imet-navy">Dip. Pepe Canto</strong>{" "}
+              diseñada para democratizar el acceso a la educación superior de
+              calidad, ofreciendo condiciones excepcionales para estudiantes
+              comprometidos con su crecimiento personal y profesional.
             </p>
             <p className="text-base leading-relaxed text-slate-600">
-              En coordinación con el{" "}
-              <strong className="text-imet-navy">Dip. Pepe Canto</strong>, iMET
+              En coordinación con iMET, el{" "}
+              <strong className="text-imet-navy">Dip. Pepe Canto</strong>{" "}
               ofrece a los aspirantes una beca del 50% en colegiaturas e
               inscripción gratuita, alineadas a las necesidades del entorno
               actual y del futuro.
