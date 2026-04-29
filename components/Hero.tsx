@@ -19,7 +19,6 @@ export default function Hero() {
             </div>
 
             <h1 className="heading-xl mb-5 sm:mb-6">
-              iMET{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 bg-gradient-to-r from-imet-aqua to-imet-aqua-dark bg-clip-text text-transparent">
                   Agentes del Cambio
