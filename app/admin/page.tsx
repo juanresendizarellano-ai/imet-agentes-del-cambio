@@ -13,7 +13,10 @@ type DashboardData = {
 async function getDashboardData(
   adminPassword: string | undefined
 ): Promise<DashboardData | { unsupported: true; providerName: string } | null> {
-  if (!adminPassword || adminPassword !== process.env.ADMIN_PASSWORD) {
+  const envPwd = (process.env.ADMIN_PASSWORD || "").trim();
+  const inputPwd = (adminPassword || "").trim();
+  console.log("[admin] envPwd length:", envPwd.length, "inputPwd length:", inputPwd.length, "match:", envPwd === inputPwd);
+  if (!inputPwd || !envPwd || inputPwd !== envPwd) {
     return null;
   }
   const storage = getStorage();
