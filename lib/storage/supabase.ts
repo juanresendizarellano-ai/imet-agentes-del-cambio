@@ -4,6 +4,8 @@ import type {
   ApplicationRecord,
   SaveResult,
   StorageAdapter,
+  VisitInput,
+  VisitStats,
 } from "./types";
 
 let cachedClient: SupabaseClient | null = null;
@@ -53,5 +55,48 @@ export const supabaseAdapter: StorageAdapter = {
       .limit(limit);
     if (error) throw error;
     return data as ApplicationRecord[];
+  },
+
+  async logVisit(input: VisitInput): Promise<void> {
+    const client = getClient();
+    const { error } = await client.from("page_visits").insert(input);
+    if (error) {
+      console.error("[supabase] logVisit error:", error);
+      // No tirar — el logging es fire-and-forget, no debe romper UX
+    }
+  },
+
+  async visitStats(): Promise<VisitStats> {
+    const client = getClient();
+    const now = new Date();
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const [totalRes, todayRes, sevenDayRes, allVisits] = await Promise.all([
+      client.from("page_visits").select("*", { count: "exact", head: true }),
+      client
+        .from("page_visits")
+        .select("*", { count: "exact", head: true })
+        .gte("created_at", startOfToday.toISOString()),
+      client
+        .from("page_visits")
+        .select("*", { count: "exact", head: true })
+        .gte("created_at", sevenDaysAgo.toISOString()),
+      client.from("page_visits").select("visitor_id"),
+    ]);
+
+    const uniqueIds = new Set(
+      (allVisits.data ?? [])
+        .map((v: { visitor_id: string | null }) => v.visitor_id)
+        .filter(Boolean)
+    );
+
+    return {
+      total_visits: totalRes.count ?? 0,
+      unique_visitors: uniqueIds.size,
+      total_visits_7d: sevenDayRes.count ?? 0,
+      total_visits_today: todayRes.count ?? 0,
+    };
   },
 };

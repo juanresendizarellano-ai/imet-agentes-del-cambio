@@ -38,6 +38,21 @@ export type SaveResult = {
   created_at: string;
 };
 
+export type VisitInput = {
+  path: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  referrer: string | null;
+  visitor_id: string | null;
+};
+
+export type VisitStats = {
+  total_visits: number;
+  unique_visitors: number;
+  total_visits_7d: number;
+  total_visits_today: number;
+};
+
 export interface StorageAdapter {
   /** Nombre del provider — útil para logs y debugging. */
   readonly name: string;
@@ -51,4 +66,10 @@ export interface StorageAdapter {
    * un arreglo vacío y el admin se redirige al CRM directamente.
    */
   list?(limit?: number): Promise<ApplicationRecord[]>;
+
+  /** Loguea una visita a la landing. Opcional. */
+  logVisit?(input: VisitInput): Promise<void>;
+
+  /** Devuelve estadísticas de visitas para el panel admin. Opcional. */
+  visitStats?(): Promise<VisitStats>;
 }

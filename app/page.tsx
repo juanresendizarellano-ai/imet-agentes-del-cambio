@@ -7,10 +7,12 @@ import Stages from "@/components/Stages";
 import Programs from "@/components/Programs";
 import ApplicationForm from "@/components/ApplicationForm";
 import Footer from "@/components/Footer";
+import VisitTracker from "@/components/VisitTracker";
 
 export default function HomePage() {
   return (
     <>
+      <VisitTracker />
       <Header />
       <main>
         <Hero />
