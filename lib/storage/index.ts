@@ -1,10 +1,12 @@
 import type { StorageAdapter } from "./types";
 import { supabaseAdapter } from "./supabase";
 import { webhookAdapter } from "./webhook";
+import { imetCrmAdapter } from "./imet-crm";
 
 const ADAPTERS: Record<string, StorageAdapter> = {
   supabase: supabaseAdapter,
   webhook: webhookAdapter,
+  "imet-crm": imetCrmAdapter,
   // Para agregar un nuevo provider (HubSpot directo, Salesforce, Sheets, etc.):
   //   1. Crea lib/storage/<nombre>.ts con un objeto que cumpla StorageAdapter
   //   2. Impórtalo aquí y agrégalo al objeto ADAPTERS
