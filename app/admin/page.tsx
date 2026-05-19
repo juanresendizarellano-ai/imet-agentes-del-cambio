@@ -179,14 +179,14 @@ export default async function AdminPage({
           />
           <StatCard
             tone="navy"
-            label="Pre-registros"
+            label="Registros"
             value={totalRegs.toLocaleString("es-MX")}
             hint={`${byStatus.pending || 0} pendientes · ${byStatus.accepted || 0} aceptados`}
           />
           <StatCard
             label="Tasa de conversión"
             value={conversionRate}
-            hint="Pre-registros / Visitas únicas"
+            hint="Registros / Visitas únicas"
           />
           <StatCard
             label="Hoy"
@@ -222,7 +222,7 @@ export default async function AdminPage({
         <div className="mb-4 flex items-end justify-between">
           <div>
             <h2 className="text-lg font-bold text-imet-navy">
-              Pre-registros recientes
+              Registros recientes
             </h2>
             <p className="mt-1 text-xs text-slate-500">
               {apps.length} solicitud{apps.length === 1 ? "" : "es"} en total
@@ -249,7 +249,7 @@ export default async function AdminPage({
                     colSpan={6}
                     className="px-4 py-8 text-center text-sm text-slate-500"
                   >
-                    Aún no hay pre-registros.
+                    Aún no hay registros.
                   </td>
                 </tr>
               ) : (
