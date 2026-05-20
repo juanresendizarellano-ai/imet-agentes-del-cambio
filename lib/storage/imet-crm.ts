@@ -42,7 +42,16 @@ type LeadDto = {
   id: number;
   asesorAsignadoId: number;
   campana: string | null;
-  // Resto de campos no nos interesan para conteo.
+  // Resto de campos no nos interesan para round-robin.
+};
+
+// Shape extendido que sí necesitamos para /stats (createdAt + tipoPrograma).
+// Lo declaramos aparte para no inflar LeadDto del round-robin.
+export type CampanaLeadStats = {
+  id: number;
+  createdAt: string;
+  tipoPrograma: string | null;
+  campana: string | null;
 };
 
 function getToken(): string {
@@ -206,6 +215,23 @@ async function patchLeadNotas(leadId: number, notas: string) {
       `[imet-crm] PUT /api/leads/${leadId} fallo (${res.status}): ${body}`
     );
   }
+}
+
+/**
+ * Devuelve los leads de la campaña con los campos necesarios para /stats:
+ * id, createdAt, tipoPrograma. Reusa el mismo filtro client-side defensivo
+ * que listCampanaLeads. Pensado para conteo público — el caller NO debe
+ * exponer los leads completos, solo los conteos derivados.
+ */
+export async function listCampanaLeadsForStats(): Promise<CampanaLeadStats[]> {
+  const qs = `?campana=${encodeURIComponent(CAMPANA)}`;
+  const res = await authedFetch(`/api/leads${qs}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`GET /api/leads fallo (${res.status}): ${body}`);
+  }
+  const all = (await res.json()) as CampanaLeadStats[];
+  return all.filter((l) => l.campana === CAMPANA);
 }
 
 export const imetCrmAdapter: StorageAdapter = {

@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { getStorage } from "@/lib/storage";
+import { supabaseAdapter } from "@/lib/storage/supabase";
 
 export const runtime = "nodejs";
+
+// Las visitas SIEMPRE se loguean a Supabase, sin importar STORAGE_PROVIDER.
+// Si STORAGE_PROVIDER=imet-crm, el adapter del CRM no tiene logVisit (no es
+// su trabajo), pero seguimos necesitando contar visitas en /stats publico.
+// Por eso importamos el supabaseAdapter directo aqui.
 
 type VisitPayload = {
   path?: string;
@@ -41,11 +46,7 @@ export async function POST(request: Request) {
     null;
 
   try {
-    const storage = getStorage();
-    if (!storage.logVisit) {
-      return NextResponse.json({ skipped: "provider-no-logVisit" });
-    }
-    await storage.logVisit({
+    await supabaseAdapter.logVisit!({
       path: body.path || "/",
       ip_address: ip,
       user_agent: userAgent,
