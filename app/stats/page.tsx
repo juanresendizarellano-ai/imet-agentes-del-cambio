@@ -227,6 +227,7 @@ export default async function StatsPage() {
   const updatedAt = new Date().toLocaleString("es-MX", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "America/Mexico_City",
   });
 
   return (
