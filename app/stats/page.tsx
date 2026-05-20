@@ -18,10 +18,13 @@ type Stats = {
   crmError: string | null;
 };
 
-async function getVisitStats(): Promise<{
+async function getSupabaseStats(): Promise<{
   totalVisits: number;
   uniqueVisitors: number;
   visitsToday: number;
+  legacyTotal: number;
+  legacyToday: number;
+  legacyByType: { licenciatura: number; maestria: number };
 } | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,13 +36,29 @@ async function getVisitStats(): Promise<{
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  const [totalRes, todayRes, allVisitorsRes] = await Promise.all([
+  // page_visits + applications (legacy: registros pre-switch al CRM, viven en
+  // supabase y no se ven desde el CRM. Los sumamos para que /stats refleje el
+  // total real de la campaña).
+  const [
+    totalRes,
+    todayRes,
+    allVisitorsRes,
+    legacyTotalRes,
+    legacyTodayRes,
+    legacyByTypeRes,
+  ] = await Promise.all([
     client.from("page_visits").select("*", { count: "exact", head: true }),
     client
       .from("page_visits")
       .select("*", { count: "exact", head: true })
       .gte("created_at", startOfToday.toISOString()),
     client.from("page_visits").select("visitor_id"),
+    client.from("applications").select("*", { count: "exact", head: true }),
+    client
+      .from("applications")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", startOfToday.toISOString()),
+    client.from("applications").select("program_type"),
   ]);
 
   const uniqueIds = new Set(
@@ -48,10 +67,21 @@ async function getVisitStats(): Promise<{
       .filter(Boolean)
   );
 
+  const legacyByType = { licenciatura: 0, maestria: 0 };
+  for (const row of (legacyByTypeRes.data ?? []) as Array<{
+    program_type: string | null;
+  }>) {
+    if (row.program_type === "licenciatura") legacyByType.licenciatura++;
+    else if (row.program_type === "maestria") legacyByType.maestria++;
+  }
+
   return {
     totalVisits: totalRes.count ?? 0,
     uniqueVisitors: uniqueIds.size,
     visitsToday: todayRes.count ?? 0,
+    legacyTotal: legacyTotalRes.count ?? 0,
+    legacyToday: legacyTodayRes.count ?? 0,
+    legacyByType,
   };
 }
 
@@ -76,8 +106,8 @@ function deriveSubmissionStats(leads: CampanaLeadStats[]) {
 }
 
 async function getStats(): Promise<Stats> {
-  const visitsPromise = getVisitStats().catch((err) => {
-    console.error("[stats] visit stats failed:", err);
+  const supabasePromise = getSupabaseStats().catch((err) => {
+    console.error("[stats] supabase stats failed:", err);
     return null;
   });
   const crmPromise = listCampanaLeadsForStats().catch((err) => {
@@ -85,29 +115,47 @@ async function getStats(): Promise<Stats> {
     return { error: err instanceof Error ? err.message : "Error desconocido" } as const;
   });
 
-  const [visits, crm] = await Promise.all([visitsPromise, crmPromise]);
+  const [supa, crm] = await Promise.all([supabasePromise, crmPromise]);
 
-  const visitDefaults = { totalVisits: 0, uniqueVisitors: 0, visitsToday: 0 };
-  const v = visits ?? visitDefaults;
+  const supaDefaults = {
+    totalVisits: 0,
+    uniqueVisitors: 0,
+    visitsToday: 0,
+    legacyTotal: 0,
+    legacyToday: 0,
+    legacyByType: { licenciatura: 0, maestria: 0 },
+  };
+  const s = supa ?? supaDefaults;
+  const visitFields = {
+    totalVisits: s.totalVisits,
+    uniqueVisitors: s.uniqueVisitors,
+    visitsToday: s.visitsToday,
+  };
 
+  // Si el CRM falla, mostramos solo los legacy (no es 0 — los registros viejos
+  // de supabase siguen siendo reales y contables).
   if (crm && "error" in crm) {
     return {
-      ...v,
-      totalSubmissions: 0,
-      submissionsToday: 0,
-      byProgramType: { licenciatura: 0, maestria: 0 },
+      ...visitFields,
+      totalSubmissions: s.legacyTotal,
+      submissionsToday: s.legacyToday,
+      byProgramType: s.legacyByType,
       crmError: crm.error,
     };
   }
 
   const leads = crm as CampanaLeadStats[];
-  const { byProgramType, submissionsToday } = deriveSubmissionStats(leads);
+  const { byProgramType: crmByType, submissionsToday: crmToday } =
+    deriveSubmissionStats(leads);
 
   return {
-    ...v,
-    totalSubmissions: leads.length,
-    submissionsToday,
-    byProgramType,
+    ...visitFields,
+    totalSubmissions: leads.length + s.legacyTotal,
+    submissionsToday: crmToday + s.legacyToday,
+    byProgramType: {
+      licenciatura: crmByType.licenciatura + s.legacyByType.licenciatura,
+      maestria: crmByType.maestria + s.legacyByType.maestria,
+    },
     crmError: null,
   };
 }
