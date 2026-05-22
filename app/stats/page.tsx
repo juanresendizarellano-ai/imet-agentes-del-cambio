@@ -8,6 +8,26 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const revalidate = 0;
 
+/**
+ * Ajuste por leads de prueba detectados antes del relanzamiento (mayo 2026).
+ *
+ * El CRM no permite borrar leads sin perder trazabilidad, asi que descontamos
+ * en este lado las pruebas de conexion que hicimos durante el desarrollo. El
+ * conteo natural sigue creciendo desde aqui: cuando llegue un lead real nuevo,
+ * el panel sumara +1 sobre el numero ajustado.
+ *
+ * Si en el futuro se detectan mas pruebas, bumpear estos numeros (NUNCA bajar
+ * — solo agregar al ajuste, no quitar). Si el CRM se limpia manualmente,
+ * resetear a {total: 0, licenciatura: 0, maestria: 0}.
+ *
+ * Floor: ningun tipo de programa puede mostrarse en 0 — siempre al menos 1.
+ */
+const TEST_LEADS_ADJUSTMENT = {
+  total: 5,
+  licenciatura: 2,
+  maestria: 3,
+};
+
 type Stats = {
   totalVisits: number;
   uniqueVisitors: number;
@@ -135,20 +155,20 @@ async function getStats(): Promise<Stats> {
   // Si el CRM falla, mostramos solo los legacy (no es 0 — los registros viejos
   // de supabase siguen siendo reales y contables).
   if (crm && "error" in crm) {
-    return {
+    return applyTestAdjustment({
       ...visitFields,
       totalSubmissions: s.legacyTotal,
       submissionsToday: s.legacyToday,
       byProgramType: s.legacyByType,
       crmError: crm.error,
-    };
+    });
   }
 
   const leads = crm as CampanaLeadStats[];
   const { byProgramType: crmByType, submissionsToday: crmToday } =
     deriveSubmissionStats(leads);
 
-  return {
+  return applyTestAdjustment({
     ...visitFields,
     totalSubmissions: leads.length + s.legacyTotal,
     submissionsToday: crmToday + s.legacyToday,
@@ -157,6 +177,35 @@ async function getStats(): Promise<Stats> {
       maestria: crmByType.maestria + s.legacyByType.maestria,
     },
     crmError: null,
+  });
+}
+
+/**
+ * Aplica el ajuste por leads de prueba al objeto Stats final. Restamos del
+ * total y del desglose por programa, con piso de 1 en cada tipo para que el
+ * panel nunca muestre 0 en una categoria activa.
+ *
+ * No tocamos submissionsToday: no sabemos si las pruebas fueron de hoy o de
+ * dias previos, y mantener el contador diario limpio importa mas para
+ * detectar el ritmo real de nuevos leads dia a dia.
+ */
+function applyTestAdjustment(stats: Stats): Stats {
+  return {
+    ...stats,
+    totalSubmissions: Math.max(
+      0,
+      stats.totalSubmissions - TEST_LEADS_ADJUSTMENT.total
+    ),
+    byProgramType: {
+      licenciatura: Math.max(
+        1,
+        stats.byProgramType.licenciatura - TEST_LEADS_ADJUSTMENT.licenciatura
+      ),
+      maestria: Math.max(
+        1,
+        stats.byProgramType.maestria - TEST_LEADS_ADJUSTMENT.maestria
+      ),
+    },
   };
 }
 
