@@ -9,23 +9,27 @@ export const runtime = "nodejs";
 export const revalidate = 0;
 
 /**
- * Ajuste por leads de prueba detectados antes del relanzamiento (mayo 2026).
+ * Ajuste manual del panel de /stats sobre lo que devuelve el CRM + Supabase.
  *
- * El CRM no permite borrar leads sin perder trazabilidad, asi que descontamos
- * en este lado las pruebas de conexion que hicimos durante el desarrollo. El
- * conteo natural sigue creciendo desde aqui: cuando llegue un lead real nuevo,
- * el panel sumara +1 sobre el numero ajustado.
+ * Convencion:
+ *   - Numero POSITIVO  → resta del display (ocultar leads, ej. pruebas que el CRM no permite borrar)
+ *   - Numero NEGATIVO  → suma al display (forzar baseline, ej. compensar leads
+ *     reales que perdieron el tag de campana o ajustar el conteo a lo que el
+ *     equipo considera correcto)
+ *   - 0                → display = raw
  *
- * Si en el futuro se detectan mas pruebas, bumpear estos numeros (NUNCA bajar
- * — solo agregar al ajuste, no quitar). Si el CRM se limpia manualmente,
- * resetear a {total: 0, licenciatura: 0, maestria: 0}.
+ * Historico:
+ *   - Mayo 2026: los 6 leads de prueba se limpiaron manualmente del CRM, asi
+ *     que ya no hay que restarlos aqui. Ajustamos +1 al total y a Licenciatura
+ *     porque el equipo cuenta 7 leads reales pero el CRM filtra 6 (un lead
+ *     real quedo sin el tag de campana en algun punto).
  *
  * Floor: ningun tipo de programa puede mostrarse en 0 — siempre al menos 1.
  */
 const TEST_LEADS_ADJUSTMENT = {
-  total: 5,
-  licenciatura: 2,
-  maestria: 3,
+  total: -1,
+  licenciatura: -1,
+  maestria: 0,
 };
 
 type Stats = {
