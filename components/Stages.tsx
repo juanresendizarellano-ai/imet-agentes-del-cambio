@@ -8,6 +8,7 @@ import {
   ChevronDown,
   type LucideIcon,
 } from "lucide-react";
+import InlineCTA from "./InlineCTA";
 
 const stages = [
   {
@@ -181,6 +182,12 @@ export default function Stages() {
             <StageCard key={s.number} {...s} />
           ))}
         </div>
+
+        <InlineCTA
+          variant="dark"
+          message="Empieza tu proceso hoy. Toma menos de 1 minuto."
+          cta="Iniciar registro"
+        />
       </div>
     </section>
   );

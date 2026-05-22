@@ -218,6 +218,66 @@ async function patchLeadNotas(leadId: number, notas: string) {
 }
 
 /**
+ * Push minimo al CRM desde el mini-form del hero. Crea un lead con solo los
+ * 4 campos basicos (nombre, telefono, edad, tipoPrograma) y lo asigna por
+ * round-robin igual que el flujo completo. Notas del CRM indican que es un
+ * "prospect" — aun no llena la aplicacion oficial.
+ *
+ * Best-effort: si el CRM falla, el caller debe seguir adelante (el lead ya
+ * quedo guardado en Supabase). Devuelve el id del CRM si todo salio bien.
+ */
+export async function pushMiniLeadToCrm(input: {
+  full_name: string;
+  phone: string;
+  age: number;
+  program_type: "licenciatura" | "maestria";
+}): Promise<{ crm_lead_id: string }> {
+  const [asesores, leads] = await Promise.all([
+    listActiveAsesores(),
+    listCampanaLeads(),
+  ]);
+
+  const asesor = pickAsesorRoundRobin(asesores, leads);
+  const tipoPrograma =
+    input.program_type === "licenciatura" ? "Licenciatura" : "Maestria";
+
+  const res = await authedFetch("/api/leads", {
+    method: "POST",
+    body: JSON.stringify({
+      nombreCompleto: input.full_name,
+      telefono: input.phone,
+      correo: null,
+      edad: input.age,
+      asesorAsignadoId: asesor.id,
+      tipoPrograma,
+      programaExternoId: null,
+      origen: "FormularioInterno",
+      campana: CAMPANA,
+      subEstado: null,
+      tags: [CAMPANA, "MINI-FORM"],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`POST /api/leads (mini) fallo (${res.status}): ${body}`);
+  }
+
+  const created = (await res.json()) as CreateLeadResponse;
+
+  // Nota libre indicando que viene del mini-form. Si falla, no abortamos.
+  const notas = [
+    "Origen: Mini-form landing (hero, captura rapida)",
+    "Estado: Prospect — pendiente completar aplicacion oficial",
+  ].join("\n\n");
+  await patchLeadNotas(created.id, notas).catch(() => {
+    // patchLeadNotas ya loguea por dentro; aqui solo evitamos romper el flujo.
+  });
+
+  return { crm_lead_id: String(created.id) };
+}
+
+/**
  * Devuelve los leads de la campaña con los campos necesarios para /stats:
  * id, createdAt, tipoPrograma. Reusa el mismo filtro client-side defensivo
  * que listCampanaLeads. Pensado para conteo público — el caller NO debe

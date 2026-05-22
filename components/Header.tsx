@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur-md">
+    <header className="border-b border-slate-100 bg-white/80 backdrop-blur-md">
       <div className="container-tight flex items-center justify-between gap-3 px-4 py-2 sm:px-6 sm:py-2 md:px-10">
         <a href="#hero" className="flex items-center">
           <Image

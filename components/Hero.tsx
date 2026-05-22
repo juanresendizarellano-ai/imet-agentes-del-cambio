@@ -1,13 +1,14 @@
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import LeadCaptureForm from "./LeadCaptureForm";
 
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-circuit pt-12 pb-20 sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32"
+      className="relative overflow-hidden bg-circuit pt-10 pb-16 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28"
     >
       <div className="container-tight px-5 sm:px-6 md:px-10">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr,1fr] lg:gap-12">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr,1fr] lg:gap-12">
           <div className="animate-fade-in-up">
             <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-imet-aqua/30 bg-white px-3 py-1.5 text-[11px] font-semibold text-imet-aqua-dark shadow-sm sm:mb-6 sm:px-4 sm:text-xs">
               <Sparkles className="h-3 w-3 flex-shrink-0 sm:h-3.5 sm:w-3.5" />
@@ -27,94 +28,94 @@ export default function Hero() {
               </span>
             </h1>
 
-            <p className="lead mb-7 max-w-xl sm:mb-8">
+            <p className="lead mb-6 max-w-xl sm:mb-7">
               Una iniciativa del{" "}
               <strong className="text-imet-navy">Dip. Pepe Canto</strong>{" "}
               en coordinación con iMET. Beca del{" "}
               <strong className="text-imet-navy">50% en colegiaturas</strong>{" "}
               e <strong className="text-imet-navy">inscripción gratuita</strong>{" "}
-              en licenciaturas y maestrías para democratizar la educación superior
-              de calidad en Yucatán.
+              en licenciaturas y maestrías.
             </p>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a href="#aplicar" className="btn-primary w-full sm:w-auto">
-                Aplicar a la beca
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <a href="#programa" className="btn-secondary w-full sm:w-auto">
-                Conocer el programa
+            {/* Cifras compactas — antes era panel de 4 cards al lado, ahora son
+                stats inline para no robar atencion al mini-form. */}
+            <div className="mb-6 grid grid-cols-3 gap-2 rounded-2xl border border-imet-aqua/15 bg-white/80 p-3 backdrop-blur-sm sm:gap-3 sm:p-4">
+              <Stat number="50%" label="Beca colegiatura" />
+              <Stat number="$0" label="Inscripción" highlight />
+              <Stat number="$3.5K" label="Ahorras al mes" />
+            </div>
+
+            {/* CTA secundario para quien quiere leer antes de inscribirse */}
+            <div className="hidden sm:flex">
+              <a
+                href="#programa"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-imet-aqua-dark transition hover:text-imet-aqua hover:underline"
+              >
+                Conoce el programa primero
+                <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-xs text-slate-500 sm:mt-10 sm:gap-x-8 sm:gap-y-3">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-imet-aqua" />
-                Sin examen de admisión
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-imet-aqua" />
-                Presencial, ejecutiva y virtual
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-imet-aqua" />
-                Mérida, Yucatán
-              </div>
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500 sm:mt-7 sm:gap-x-7">
+              <Trust label="Sin examen de admisión" />
+              <Trust label="Presencial, ejecutiva y virtual" />
+              <Trust label="Mérida, Yucatán" />
             </div>
           </div>
 
-          {/* Cifras: stack vertical en mobile, grid 2x2 en desktop */}
-          <div className="relative animate-fade-in lg:justify-self-end">
+          {/* Mini-form de captura — el corazon del nuevo flujo de conversion */}
+          <div id="hero-form" className="relative lg:justify-self-end">
             <div className="absolute -top-4 -right-4 h-72 w-72 rounded-full bg-imet-aqua/10 blur-3xl" />
             <div className="absolute -bottom-8 -left-8 h-64 w-64 rounded-full bg-imet-mint blur-3xl" />
 
-            <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="col-span-2 rounded-2xl bg-aqua-gradient p-6 text-white shadow-xl shadow-imet-aqua/30 sm:p-7">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/70">
-                  Beneficio principal
-                </div>
-                <div className="mt-2 text-4xl font-black leading-none sm:text-5xl">
-                  50%
-                </div>
-                <div className="mt-2 text-sm font-medium text-white/90">
-                  Beca en colegiaturas durante toda tu carrera
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100 sm:p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  Inscripción
-                </div>
-                <div className="mt-1 text-2xl font-black text-imet-navy sm:text-3xl">
-                  $0
-                </div>
-                <div className="mt-1 text-xs text-slate-500">
-                  Bonificada al 100%
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-imet-navy p-4 text-white shadow-lg sm:p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/60">
-                  Ahorras hasta
-                </div>
-                <div className="mt-1 text-2xl font-black sm:text-3xl">$3.5K</div>
-                <div className="mt-1 text-xs text-white/70">MXN al mes</div>
-              </div>
-
-              <div className="col-span-2 rounded-2xl border-2 border-dashed border-imet-aqua/40 bg-white p-4 sm:p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-imet-mint sm:h-10 sm:w-10">
-                    <Sparkles className="h-4 w-4 text-imet-aqua-dark" />
-                  </div>
-                  <div className="text-xs font-medium text-imet-navy sm:text-sm">
-                    + Insignia LinkedIn cada cuatrimestre
-                  </div>
-                </div>
-              </div>
+            <div className="relative">
+              <LeadCaptureForm />
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function Stat({
+  number,
+  label,
+  highlight,
+}: {
+  number: string;
+  label: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl px-3 py-2.5 text-center ${
+        highlight ? "bg-aqua-gradient text-white shadow-md shadow-imet-aqua/30" : "bg-white ring-1 ring-slate-100"
+      }`}
+    >
+      <div
+        className={`text-xl font-black leading-none sm:text-2xl ${
+          highlight ? "text-white" : "text-imet-navy"
+        }`}
+      >
+        {number}
+      </div>
+      <div
+        className={`mt-1 text-[10px] font-medium leading-tight sm:text-xs ${
+          highlight ? "text-white/85" : "text-slate-500"
+        }`}
+      >
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function Trust({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 text-imet-aqua-dark" />
+      <span>{label}</span>
+    </div>
   );
 }

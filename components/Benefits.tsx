@@ -14,6 +14,7 @@ import {
   ChevronDown,
   type LucideIcon,
 } from "lucide-react";
+import InlineCTA from "./InlineCTA";
 
 const benefits = [
   {
@@ -161,6 +162,12 @@ export default function Benefits() {
             <BenefitCard key={b.number} {...b} />
           ))}
         </div>
+
+        <InlineCTA
+          variant="light"
+          message="Todo esto te espera. Asegura tu lugar en menos de 1 minuto."
+          cta="Reservar mi beca"
+        />
       </div>
     </section>
   );

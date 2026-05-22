@@ -27,6 +27,24 @@ body {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-imet-aqua px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-imet-aqua/30 transition hover:bg-imet-aqua-dark hover:shadow-xl hover:shadow-imet-aqua/40 focus:outline-none focus:ring-2 focus:ring-imet-aqua focus:ring-offset-2 sm:px-7 sm:py-3.5;
   }
 
+  /* CTA con pulso + barrido brillante. Uso reservado para el boton principal
+     del hero y el sticky mobile — no abusar (perderia su jerarquia visual). */
+  .btn-primary-hero {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-imet-aqua px-7 py-4 text-base font-bold text-white shadow-lg shadow-imet-aqua/40 transition hover:bg-imet-aqua-dark focus:outline-none focus:ring-2 focus:ring-imet-aqua focus:ring-offset-2 sm:px-8 sm:py-4 sm:text-base;
+    animation: pulseGlow 2.4s ease-in-out infinite;
+  }
+  .btn-primary-hero::before {
+    content: "";
+    @apply pointer-events-none absolute inset-y-0 -inset-x-4 bg-gradient-to-r from-transparent via-white/40 to-transparent;
+    animation: shineSweep 3.5s ease-in-out infinite;
+  }
+  .btn-primary-hero:hover {
+    animation-play-state: paused;
+  }
+  .btn-primary-hero > * {
+    @apply relative z-10;
+  }
+
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-imet-aqua bg-white px-6 py-3 text-sm font-semibold text-imet-aqua-dark transition hover:bg-imet-mint focus:outline-none focus:ring-2 focus:ring-imet-aqua focus:ring-offset-2 sm:px-7 sm:py-3.5;
   }

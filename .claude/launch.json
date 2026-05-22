@@ -5,7 +5,7 @@
       "name": "imet-landing",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "cwd": "C:\\Users\\juan_\\Downloads\\apps-claude\\imet-agentes-del-cambio",
+      "cwd": "C:\\Users\\juan_\\OneDrive\\Documentos\\Claude\\CODE\\imet-agentes-del-cambio",
       "port": 3030
     }
   ]

@@ -28,6 +28,50 @@ function getClient(): SupabaseClient {
   return cachedClient;
 }
 
+export type LeadInput = {
+  full_name: string;
+  phone: string;
+  age: number;
+  program_type: "licenciatura" | "maestria";
+  ip_address: string | null;
+  user_agent: string | null;
+  source?: string;
+};
+
+export type LeadUpdate = {
+  crm_lead_id?: string | null;
+  crm_push_status?: "success" | "failed";
+  crm_push_error?: string | null;
+};
+
+/**
+ * Guarda un lead capturado por el mini-form del hero. Independiente del
+ * adapter activo: este flujo siempre escribe a Supabase para tener un control
+ * de campana propio (visitas vs leads vs aplicaciones completas).
+ */
+export async function saveLeadToSupabase(input: LeadInput): Promise<{ id: string; created_at: string }> {
+  const client = getClient();
+  const { data, error } = await client
+    .from("leads")
+    .insert(input)
+    .select("id, created_at")
+    .single();
+  if (error) {
+    console.error("[supabase] insert lead error:", error);
+    throw new Error("No se pudo guardar el lead en Supabase");
+  }
+  return { id: data.id, created_at: data.created_at };
+}
+
+export async function updateLeadInSupabase(id: string, patch: LeadUpdate): Promise<void> {
+  const client = getClient();
+  const { error } = await client.from("leads").update(patch).eq("id", id);
+  if (error) {
+    console.error("[supabase] update lead error:", error);
+    // No tirar: la actualizacion del estado CRM es best-effort.
+  }
+}
+
 export const supabaseAdapter: StorageAdapter = {
   name: "supabase",
 

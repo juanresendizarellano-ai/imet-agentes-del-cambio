@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import InlineCTA from "./InlineCTA";
 
 const licenciaturas = [
   { name: "Administración de Empresas", modes: "Todas las modalidades" },
@@ -138,6 +139,12 @@ export default function Programs() {
           Los precios están sujetos a ajuste anual conforme al índice de
           inflación. iMET notifica oportunamente cualquier actualización.
         </p>
+
+        <InlineCTA
+          variant="light"
+          message="¿Ya tienes tu programa favorito? Apártalo con tu registro rápido."
+          cta="Apartar mi lugar"
+        />
       </div>
     </section>
   );
