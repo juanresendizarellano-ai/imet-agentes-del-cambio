@@ -72,6 +72,63 @@ export async function updateLeadInSupabase(id: string, patch: LeadUpdate): Promi
   }
 }
 
+export type PreRegisterInput = {
+  full_name: string;
+  phone: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  source?: string;
+};
+
+export type PreRegisterRecord = {
+  id: string;
+  full_name: string;
+  phone: string;
+  created_at: string;
+};
+
+/**
+ * Lookup de un preregistro por id. Usado para reconocer a un visitante
+ * cuando llega con ?p=<id> en el URL (links compartidos por el equipo).
+ * Devuelve null si no existe — no tira para no exponer si un id es válido.
+ */
+export async function getPreRegisterById(
+  id: string
+): Promise<PreRegisterRecord | null> {
+  const client = getClient();
+  const { data, error } = await client
+    .from("preregistrations")
+    .select("id, full_name, phone, created_at")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) {
+    console.error("[supabase] lookup preregistration error:", error);
+    return null;
+  }
+  return data as PreRegisterRecord | null;
+}
+
+/**
+ * Guarda un preregistro (gate de acceso a la landing).
+ * Es el primer touchpoint identificado del visitante — solo nombre + whatsapp.
+ * Funnel: preregistrations -> leads -> applications.
+ */
+export async function savePreRegisterToSupabase(
+  input: PreRegisterInput
+): Promise<{ id: string; created_at: string }> {
+  const client = getClient();
+  const { data, error } = await client
+    .from("preregistrations")
+    .insert(input)
+    .select("id, created_at")
+    .single();
+  if (error) {
+    console.error("[supabase] insert preregistration error:", error);
+    throw new Error("No se pudo guardar el preregistro en Supabase");
+  }
+  return { id: data.id, created_at: data.created_at };
+}
+
 export const supabaseAdapter: StorageAdapter = {
   name: "supabase",
 

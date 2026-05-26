@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -25,12 +25,44 @@ const initialState: FormState = {
   program_type: "",
 };
 
+// Mismo key que PreRegisterGate. Lee aquí para prellenar el form del Hero.
+const PREREGISTER_KEY = "imet_preregister";
+
+type StoredPreRegister = {
+  full_name?: string;
+  phone?: string;
+  preregister_id?: string;
+};
+
 export default function LeadCaptureForm() {
   const [form, setForm] = useState<FormState>(initialState);
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  // Si el gate ya capturó nombre+whatsapp, ocultamos esos campos y mostramos
+  // un saludo personalizado. El usuario solo completa edad + programa.
+  const [preregistered, setPreregistered] = useState<StoredPreRegister | null>(
+    null
+  );
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(PREREGISTER_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as StoredPreRegister;
+      if (parsed.full_name && parsed.phone) {
+        setPreregistered(parsed);
+        setForm((prev) => ({
+          ...prev,
+          full_name: parsed.full_name!,
+          phone: parsed.phone!,
+        }));
+      }
+    } catch {
+      // si falla el parse, no es crítico — el form sigue vacío como antes
+    }
+  }, []);
 
   const update =
     <K extends keyof FormState>(key: K) =>
@@ -114,38 +146,60 @@ export default function LeadCaptureForm() {
       <div className="relative">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-imet-mint px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-imet-aqua-dark">
           <Sparkles className="h-3 w-3" />
-          Reserva tu lugar
+          {preregistered ? "Último paso" : "Reserva tu lugar"}
         </div>
         <h3 className="mb-1 text-lg font-black leading-tight text-imet-navy sm:text-xl">
-          Apunta a tu beca del 50%
+          {preregistered
+            ? `¡Hola, ${preregistered.full_name?.split(" ")[0] ?? ""}! Completa tu beca`
+            : "Apunta a tu beca del 50%"}
         </h3>
         <p className="mb-5 text-xs text-slate-500 sm:text-sm">
-          Déjanos tus datos y un asesor te contacta en 48 hrs.
+          {preregistered
+            ? "Sólo nos falta tu edad y el tipo de programa. Un asesor te contacta en 48 hrs."
+            : "Déjanos tus datos y un asesor te contacta en 48 hrs."}
         </p>
 
         <div className="space-y-3">
-          <input
-            type="text"
-            required
-            minLength={3}
-            value={form.full_name}
-            onChange={update("full_name")}
-            className={inputClasses}
-            placeholder="Nombre completo"
-            autoComplete="name"
-          />
+          {!preregistered && (
+            <>
+              <input
+                type="text"
+                required
+                minLength={3}
+                value={form.full_name}
+                onChange={update("full_name")}
+                className={inputClasses}
+                placeholder="Nombre completo"
+                autoComplete="name"
+              />
 
-          <input
-            type="tel"
-            required
-            pattern="[0-9\s+()-]{10,}"
-            value={form.phone}
-            onChange={update("phone")}
-            className={inputClasses}
-            placeholder="WhatsApp (999 123 4567)"
-            autoComplete="tel"
-            inputMode="tel"
-          />
+              <input
+                type="tel"
+                required
+                pattern="[0-9\s+()-]{10,}"
+                value={form.phone}
+                onChange={update("phone")}
+                className={inputClasses}
+                placeholder="WhatsApp (999 123 4567)"
+                autoComplete="tel"
+                inputMode="tel"
+              />
+            </>
+          )}
+
+          {preregistered && (
+            <div className="flex items-center justify-between rounded-xl border border-imet-aqua/20 bg-imet-cream px-4 py-3 text-xs">
+              <div className="min-w-0">
+                <div className="font-semibold text-imet-navy truncate">
+                  {preregistered.full_name}
+                </div>
+                <div className="text-slate-500 truncate">
+                  WhatsApp {preregistered.phone}
+                </div>
+              </div>
+              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-imet-aqua-dark" />
+            </div>
+          )}
 
           <div className="grid grid-cols-[1fr,1.5fr] gap-3">
             <input
@@ -196,7 +250,7 @@ export default function LeadCaptureForm() {
             </>
           ) : (
             <>
-              Quiero mi beca del 50%
+              {preregistered ? "Confirmar mi beca del 50%" : "Quiero mi beca del 50%"}
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </>
           )}

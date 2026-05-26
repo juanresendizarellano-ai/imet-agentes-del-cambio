@@ -10,10 +10,12 @@ import Footer from "@/components/Footer";
 import VisitTracker from "@/components/VisitTracker";
 import UrgencyBanner from "@/components/UrgencyBanner";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
+import PreRegisterGate from "@/components/PreRegisterGate";
 
 export default function HomePage() {
   return (
     <>
+      <PreRegisterGate />
       <VisitTracker />
       {/* Wrapper sticky: banner + header viajan juntos en la parte superior */}
       <div className="sticky top-0 z-40">
