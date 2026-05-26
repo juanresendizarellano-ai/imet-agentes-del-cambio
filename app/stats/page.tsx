@@ -36,6 +36,8 @@ type Stats = {
   totalVisits: number;
   uniqueVisitors: number;
   visitsToday: number;
+  totalPreregistrations: number;
+  preregistrationsToday: number;
   totalSubmissions: number;
   submissionsToday: number;
   byProgramType: { licenciatura: number; maestria: number };
@@ -46,6 +48,8 @@ async function getSupabaseStats(): Promise<{
   totalVisits: number;
   uniqueVisitors: number;
   visitsToday: number;
+  totalPreregistrations: number;
+  preregistrationsToday: number;
   legacyTotal: number;
   legacyToday: number;
   legacyByType: { licenciatura: number; maestria: number };
@@ -63,10 +67,14 @@ async function getSupabaseStats(): Promise<{
   // page_visits + applications (legacy: registros pre-switch al CRM, viven en
   // supabase y no se ven desde el CRM. Los sumamos para que /stats refleje el
   // total real de la campaña).
+  // preregistrations: gate de entrada de la landing — primer touchpoint
+  // identificado del visitante (nombre + whatsapp).
   const [
     totalRes,
     todayRes,
     allVisitorsRes,
+    preregTotalRes,
+    preregTodayRes,
     legacyTotalRes,
     legacyTodayRes,
     legacyByTypeRes,
@@ -77,6 +85,13 @@ async function getSupabaseStats(): Promise<{
       .select("*", { count: "exact", head: true })
       .gte("created_at", startOfToday.toISOString()),
     client.from("page_visits").select("visitor_id"),
+    client
+      .from("preregistrations")
+      .select("*", { count: "exact", head: true }),
+    client
+      .from("preregistrations")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", startOfToday.toISOString()),
     client.from("applications").select("*", { count: "exact", head: true }),
     client
       .from("applications")
@@ -103,6 +118,8 @@ async function getSupabaseStats(): Promise<{
     totalVisits: totalRes.count ?? 0,
     uniqueVisitors: uniqueIds.size,
     visitsToday: todayRes.count ?? 0,
+    totalPreregistrations: preregTotalRes.count ?? 0,
+    preregistrationsToday: preregTodayRes.count ?? 0,
     legacyTotal: legacyTotalRes.count ?? 0,
     legacyToday: legacyTodayRes.count ?? 0,
     legacyByType,
@@ -145,22 +162,26 @@ async function getStats(): Promise<Stats> {
     totalVisits: 0,
     uniqueVisitors: 0,
     visitsToday: 0,
+    totalPreregistrations: 0,
+    preregistrationsToday: 0,
     legacyTotal: 0,
     legacyToday: 0,
     legacyByType: { licenciatura: 0, maestria: 0 },
   };
   const s = supa ?? supaDefaults;
-  const visitFields = {
+  const visitAndPreregFields = {
     totalVisits: s.totalVisits,
     uniqueVisitors: s.uniqueVisitors,
     visitsToday: s.visitsToday,
+    totalPreregistrations: s.totalPreregistrations,
+    preregistrationsToday: s.preregistrationsToday,
   };
 
   // Si el CRM falla, mostramos solo los legacy (no es 0 — los registros viejos
   // de supabase siguen siendo reales y contables).
   if (crm && "error" in crm) {
     return applyTestAdjustment({
-      ...visitFields,
+      ...visitAndPreregFields,
       totalSubmissions: s.legacyTotal,
       submissionsToday: s.legacyToday,
       byProgramType: s.legacyByType,
@@ -173,7 +194,7 @@ async function getStats(): Promise<Stats> {
     deriveSubmissionStats(leads);
 
   return applyTestAdjustment({
-    ...visitFields,
+    ...visitAndPreregFields,
     totalSubmissions: leads.length + s.legacyTotal,
     submissionsToday: crmToday + s.legacyToday,
     byProgramType: {
@@ -260,22 +281,30 @@ function StatCard({
   );
 }
 
+function pct(numerator: number, denominator: number): string {
+  if (denominator <= 0) return "—";
+  return ((numerator / denominator) * 100).toFixed(1) + "%";
+}
+
 export default async function StatsPage() {
   const stats = await getStats();
   const {
     totalVisits,
     uniqueVisitors,
     visitsToday,
+    totalPreregistrations,
+    preregistrationsToday,
     totalSubmissions,
     submissionsToday,
     byProgramType,
     crmError,
   } = stats;
 
-  const conversionRate =
-    uniqueVisitors > 0
-      ? ((totalSubmissions / uniqueVisitors) * 100).toFixed(1) + "%"
-      : "—";
+  // Funnel completo:
+  //   visitas únicas → preregistros (gate) → formularios finales (aplicaciones)
+  const preregistrationRate = pct(totalPreregistrations, uniqueVisitors);
+  const submissionRateVsPrereg = pct(totalSubmissions, totalPreregistrations);
+  const submissionRateVsVisits = pct(totalSubmissions, uniqueVisitors);
 
   const updatedAt = new Date().toLocaleString("es-MX", {
     dateStyle: "medium",
@@ -306,40 +335,38 @@ export default async function StatsPage() {
           </div>
         ) : null}
 
+        {/* Funnel principal: visitas → preregistros → formularios finales */}
         <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard
             tone="aqua"
             label="Visitas únicas"
             value={uniqueVisitors.toLocaleString("es-MX")}
-            hint={`${totalVisits.toLocaleString("es-MX")} pageviews totales`}
+            hint={`${totalVisits.toLocaleString("es-MX")} pageviews · ${visitsToday} hoy`}
           />
           <StatCard
             tone="navy"
-            label="Formularios enviados"
-            value={totalSubmissions.toLocaleString("es-MX")}
-            hint={`${submissionsToday} hoy`}
+            label="Preregistros"
+            value={totalPreregistrations.toLocaleString("es-MX")}
+            hint={`${preregistrationRate} de visitas · ${preregistrationsToday} hoy`}
           />
           <StatCard
-            label="Tasa de conversión"
-            value={conversionRate}
-            hint="Formularios / Visitas únicas"
+            label="Formularios finales"
+            value={totalSubmissions.toLocaleString("es-MX")}
+            hint={`${submissionRateVsPrereg} de preregistros · ${submissionRateVsVisits} de visitas · ${submissionsToday} hoy`}
           />
         </section>
 
-        <section className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard
-            label="Visitas hoy"
-            value={visitsToday.toLocaleString("es-MX")}
-          />
+        {/* Desglose de formularios finales por tipo de programa */}
+        <section className="mb-10 grid gap-4 sm:grid-cols-2">
           <StatCard
             label="Licenciatura"
             value={byProgramType.licenciatura.toLocaleString("es-MX")}
-            hint="Formularios elegidos"
+            hint="Formularios finales elegidos"
           />
           <StatCard
             label="Maestría"
             value={byProgramType.maestria.toLocaleString("es-MX")}
-            hint="Formularios elegidos"
+            hint="Formularios finales elegidos"
           />
         </section>
 
