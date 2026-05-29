@@ -1,5 +1,5 @@
 import { ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
-import LeadCaptureForm from "./LeadCaptureForm";
+import ApplicationForm from "./ApplicationForm";
 
 export default function Hero() {
   return (
@@ -8,8 +8,8 @@ export default function Hero() {
       className="relative overflow-hidden bg-circuit pt-10 pb-16 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28"
     >
       <div className="container-tight px-5 sm:px-6 md:px-10">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr,1fr] lg:gap-12">
-          <div className="animate-fade-in-up">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr,1.05fr] lg:gap-12">
+          <div className="animate-fade-in-up lg:pt-6">
             <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-imet-aqua/30 bg-white px-3 py-1.5 text-[11px] font-semibold text-imet-aqua-dark shadow-sm sm:mb-6 sm:px-4 sm:text-xs">
               <Sparkles className="h-3 w-3 flex-shrink-0 sm:h-3.5 sm:w-3.5" />
               <span className="truncate">iMET, líder en IA del sureste mexicano</span>
@@ -37,15 +37,12 @@ export default function Hero() {
               en licenciaturas y maestrías.
             </p>
 
-            {/* Cifras compactas — antes era panel de 4 cards al lado, ahora son
-                stats inline para no robar atencion al mini-form. */}
             <div className="mb-6 grid grid-cols-3 gap-2 rounded-2xl border border-imet-aqua/15 bg-white/80 p-3 backdrop-blur-sm sm:gap-3 sm:p-4">
               <Stat number="50%" label="Beca colegiatura" />
               <Stat number="$0" label="Inscripción" highlight />
               <Stat number="$3.5K" label="Ahorras al mes" />
             </div>
 
-            {/* CTA secundario para quien quiere leer antes de inscribirse */}
             <div className="hidden sm:flex">
               <a
                 href="#programa"
@@ -63,13 +60,13 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Mini-form de captura — el corazon del nuevo flujo de conversion */}
-          <div id="hero-form" className="relative lg:justify-self-end">
+          {/* Formulario de aplicación en la parte superior — misma DB que el de abajo */}
+          <div className="relative lg:justify-self-end">
             <div className="absolute -top-4 -right-4 h-72 w-72 rounded-full bg-imet-aqua/10 blur-3xl" />
             <div className="absolute -bottom-8 -left-8 h-64 w-64 rounded-full bg-imet-mint blur-3xl" />
 
             <div className="relative">
-              <LeadCaptureForm />
+              <ApplicationForm id="hero-form" showCrossRef={false} embedded />
             </div>
           </div>
         </div>

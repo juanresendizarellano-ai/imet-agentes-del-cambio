@@ -37,7 +37,15 @@ const initialState: FormState = {
   maestria_virtual: "",
 };
 
-export default function ApplicationForm() {
+export default function ApplicationForm({
+  id = "aplicar",
+  showCrossRef = true,
+  embedded = false,
+}: {
+  id?: string;
+  showCrossRef?: boolean;
+  embedded?: boolean;
+} = {}) {
   const [form, setForm] = useState<FormState>(initialState);
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -95,79 +103,102 @@ export default function ApplicationForm() {
   };
 
   if (status === "success") {
+    const successCard = (
+      <div
+        className={`mx-auto max-w-2xl rounded-3xl border border-imet-aqua/20 bg-white text-center shadow-xl ${
+          embedded ? "p-7 sm:p-9" : "p-12"
+        }`}
+      >
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-imet-mint">
+          <CheckCircle2 className="h-8 w-8 text-imet-aqua-dark" />
+        </div>
+        <h2 className="heading-md mb-4">¡Registro recibido!</h2>
+        <p className="mb-6 text-base leading-relaxed text-slate-600">
+          Gracias por registrarte al programa{" "}
+          <strong className="text-imet-navy">Agentes del Cambio</strong>.
+          Tu registro quedó confirmado.
+          Te contactaremos al teléfono que registraste para continuar con
+          el proceso.
+        </p>
+        <div className="rounded-xl bg-imet-cream p-5 text-left">
+          <div className="mb-2 text-xs font-bold uppercase tracking-widest text-imet-aqua-dark">
+            Próximos pasos
+          </div>
+          <ol className="space-y-2 text-sm text-slate-700">
+            <li className="flex gap-3">
+              <span className="font-bold text-imet-aqua-dark">1.</span>
+              Evaluación del comité (1-2 semanas).
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-imet-aqua-dark">2.</span>
+              Posible entrevista breve para conocerte mejor.
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-imet-aqua-dark">3.</span>
+              Resultado final por teléfono y correo.
+            </li>
+          </ol>
+        </div>
+        <button
+          onClick={() => setStatus("idle")}
+          className="mt-6 text-sm font-semibold text-imet-aqua-dark hover:underline"
+        >
+          Enviar otra solicitud
+        </button>
+      </div>
+    );
+
+    if (embedded) {
+      return (
+        <div id={id} className="scroll-mt-28">
+          {successCard}
+        </div>
+      );
+    }
+
     return (
       <section
-        id="aplicar"
+        id={id}
         className="section bg-gradient-to-br from-imet-mint via-white to-imet-mint"
       >
-        <div className="container-tight">
-          <div className="mx-auto max-w-2xl rounded-3xl border border-imet-aqua/20 bg-white p-12 text-center shadow-xl">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-imet-mint">
-              <CheckCircle2 className="h-8 w-8 text-imet-aqua-dark" />
-            </div>
-            <h2 className="heading-md mb-4">¡Registro recibido!</h2>
-            <p className="mb-6 text-base leading-relaxed text-slate-600">
-              Gracias por registrarte al programa{" "}
-              <strong className="text-imet-navy">Agentes del Cambio</strong>.
-              Tu registro quedó confirmado.
-              Te contactaremos al teléfono que registraste para continuar con
-              el proceso.
-            </p>
-            <div className="rounded-xl bg-imet-cream p-5 text-left">
-              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-imet-aqua-dark">
-                Próximos pasos
-              </div>
-              <ol className="space-y-2 text-sm text-slate-700">
-                <li className="flex gap-3">
-                  <span className="font-bold text-imet-aqua-dark">1.</span>
-                  Evaluación del comité (1-2 semanas).
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-imet-aqua-dark">2.</span>
-                  Posible entrevista breve para conocerte mejor.
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-imet-aqua-dark">3.</span>
-                  Resultado final por teléfono y correo.
-                </li>
-              </ol>
-            </div>
-            <button
-              onClick={() => setStatus("idle")}
-              className="mt-6 text-sm font-semibold text-imet-aqua-dark hover:underline"
-            >
-              Enviar otra solicitud
-            </button>
-          </div>
-        </div>
+        <div className="container-tight">{successCard}</div>
       </section>
     );
   }
 
-  return (
-    <section id="aplicar" className="section bg-imet-cream">
-      <div className="container-tight">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-10 text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-imet-aqua px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-md shadow-imet-aqua/30 sm:text-xs">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-              Aplicación oficial
-            </div>
-            <h2 className="heading-lg mb-4">Completa tu aplicación al programa</h2>
-            <p className="lead mb-5">
-              Cuéntanos un poco más para que el comité pueda evaluar tu
-              candidatura. Toma menos de 5 minutos.
-            </p>
-            <div className="mx-auto inline-flex items-start gap-2 rounded-xl border border-imet-aqua/20 bg-white px-4 py-2.5 text-left text-xs text-slate-600 sm:text-sm">
-              <span className="mt-0.5 text-imet-aqua-dark">ⓘ</span>
-              <span>
-                ¿Ya te registraste arriba? <strong className="text-imet-navy">Perfecto</strong> —
-                este formulario completa tu expediente para el comité
-                evaluador.
-              </span>
-            </div>
-          </div>
+  const header = (
+    <div className={embedded ? "mb-6" : "mb-10 text-center"}>
+      <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-imet-aqua px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-md shadow-imet-aqua/30 sm:text-xs">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+        Aplicación oficial
+      </div>
+      <h2
+        className={
+          embedded
+            ? "mb-3 text-2xl font-black leading-tight text-imet-navy sm:text-3xl"
+            : "heading-lg mb-4"
+        }
+      >
+        Completa tu aplicación al programa
+      </h2>
+      <p className={embedded ? "mb-2 text-sm text-slate-500" : "lead mb-5"}>
+        Cuéntanos un poco más para que el comité pueda evaluar tu
+        candidatura. Toma menos de 5 minutos.
+      </p>
+      {showCrossRef && (
+        <div className="mx-auto inline-flex items-start gap-2 rounded-xl border border-imet-aqua/20 bg-white px-4 py-2.5 text-left text-xs text-slate-600 sm:text-sm">
+          <span className="mt-0.5 text-imet-aqua-dark">ⓘ</span>
+          <span>
+            ¿Ya te registraste arriba? <strong className="text-imet-navy">Perfecto</strong> —
+            este formulario completa tu expediente para el comité
+            evaluador.
+          </span>
+        </div>
+      )}
+    </div>
+  );
 
+  const formCard = (
           <form
             onSubmit={handleSubmit}
             className="rounded-3xl border border-slate-100 bg-white p-5 shadow-xl shadow-slate-200/40 sm:p-7 md:p-10"
@@ -402,6 +433,23 @@ export default function ApplicationForm() {
               </button>
             </div>
           </form>
+  );
+
+  if (embedded) {
+    return (
+      <div id={id} className="scroll-mt-28">
+        {header}
+        {formCard}
+      </div>
+    );
+  }
+
+  return (
+    <section id={id} className="section bg-imet-cream">
+      <div className="container-tight">
+        <div className="mx-auto max-w-3xl">
+          {header}
+          {formCard}
         </div>
       </div>
     </section>
